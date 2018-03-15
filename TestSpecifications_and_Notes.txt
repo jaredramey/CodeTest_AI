@@ -1,0 +1,25 @@
+Ronaware studio code test:
+
+AI specifications -
+1) An enemy on patrol
+2) An enemy spotting the player and giving chase and shooting
+3) An enemy losing the character and giving up after a while
+4) An enemy resuming its original patrol
+
+TODO:
+1. Create a small level that has walls to break line of sight.
+2. Create a Patrol script that makes the AI go from point to point.
+   (Could probably reuse some old code for adding new points in editor.)
+3. Create a Pursuit script that makes the AI chase the player.
+   (Or at least moves to the last known sighting of the player.)
+4. Create a Sense script for sight and sound that lets the AI chase player
+   when it "hears" or "sees" the player.
+5. Create the base AI script that uses Patrol and Pursuit scripts and dictates
+   how the AI behaves based on sight and sound.
+6. Create a basic player controller that allows for a user to run through the level.
+   | Controls for player:                                        |
+   | W - Move forward        Ctrl - Crouch (To prevent noise)    |
+   | A - Move left           F - Drop a "cigarette"              |
+   | S - Move backward                                           |
+   | D - move right                                              |
+7. (Wish list) Add a mechanic that distracts the AI when the player drops a "cigarette".
