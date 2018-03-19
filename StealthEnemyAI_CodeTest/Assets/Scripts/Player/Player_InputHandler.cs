@@ -55,7 +55,6 @@ public class Player_InputHandler : MonoBehaviour
         //Move forward
         if(Input.GetKeyDown(KeyCode.W))
         {
-            Debug.Log("Calling move forward");
             OnMoveForward.Invoke();
         }
         //Move Left
