@@ -7,11 +7,13 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Chase))]
 [RequireComponent(typeof(Patrol))]
 [RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Shoot))]
 public class AI_Controller : MonoBehaviour
 {
     private Chase chase;
     private Patrol patrol;
-    private NavMeshAgent navMesh;
+    private Shoot shoot;
+    private NavMeshAgent navAgent;
     bool Test_ForceCanSeePlayer;
 
     // Use this for initialization
@@ -19,7 +21,8 @@ public class AI_Controller : MonoBehaviour
     {
         chase = gameObject.GetComponent<Chase>();
         patrol = gameObject.GetComponent<Patrol>();
-        navMesh = gameObject.GetComponent<NavMeshAgent>();
+        shoot = gameObject.GetComponent<Shoot>();
+        navAgent = gameObject.GetComponent<NavMeshAgent>();
 
         chase.shouldChase = false;
         patrol.shouldPatrol = false;
@@ -42,13 +45,14 @@ public class AI_Controller : MonoBehaviour
 
         if(/*chase.shouldChase == true || */Test_ForceCanSeePlayer == true)
         {
-            //patrol.shouldPatrol = false;
+            patrol.shouldPatrol = false;
             Test_MoveToPlayer();
+            shoot.ShootAtTarget(GameObject.Find("Player"));
         }
         else if (/*chase.shouldChase == false || */Test_ForceCanSeePlayer == false)
         {
-            NavigateToNextPatrolPoint();
-            //patrol.shouldPatrol = true;
+            //NavigateToNextPatrolPoint();
+            patrol.shouldPatrol = true;
         }
     }
 
@@ -56,13 +60,13 @@ public class AI_Controller : MonoBehaviour
     {
         Debug.Log("Moving To patrol point");
         Vector3 targetDestination = patrol.GetNextPatrolPoint();
-        navMesh.destination = targetDestination;
+        navAgent.destination = targetDestination;
     }
 
     private void Test_MoveToPlayer()
     {
         Debug.Log("Moving To player");
         Vector3 targetDestination = GameObject.Find("Player").transform.position;
-        navMesh.destination = targetDestination;
+        navAgent.destination = targetDestination;
     }
 }

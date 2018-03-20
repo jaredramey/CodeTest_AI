@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 [RequireComponent(typeof(SphereCollider))]
+[RequireComponent(typeof(NavMeshAgent))]
 public class Chase : MonoBehaviour
 {
     public bool shouldChase;
@@ -10,6 +12,7 @@ public class Chase : MonoBehaviour
     private SphereCollider perception;
     private bool playerIsNear;
     private GameObject player;
+    private NavMeshAgent navAgent;
 
     // Use this for initialization
     void Start()
@@ -17,6 +20,7 @@ public class Chase : MonoBehaviour
         shouldChase = false;
         playerIsNear = false;
         perception = gameObject.GetComponent<SphereCollider>();
+        navAgent = gameObject.GetComponent<NavMeshAgent>();
         player = GameObject.Find("Player");
     }
 
@@ -43,9 +47,7 @@ public class Chase : MonoBehaviour
 
     private void ChasePlayer()
     {
-        Vector3 direction = player.transform.position - gameObject.transform.position;
-        gameObject.transform.position += (direction.normalized) * Time.deltaTime * speed;
-        gameObject.transform.LookAt(player.transform.position);
+        navAgent.destination = player.transform.position;
     }
 
     private void OnTriggerEnter(Collider other)

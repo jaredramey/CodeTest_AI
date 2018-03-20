@@ -1,15 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class Patrol : MonoBehaviour
 {
     [HideInInspector]
     private List<Vector3> patrolPoints = new List<Vector3>();
     public bool shouldPatrol;
-    public float speed;
     public bool showPath;
     private int index;
+    private NavMeshAgent navAgent;
 
     // Use this for initialization
     void Start()
@@ -22,8 +24,9 @@ public class Patrol : MonoBehaviour
             }
         }
 
-        if (!Application.isPlaying) return;
+        navAgent = gameObject.GetComponent<NavMeshAgent>();
         index = 0;
+        navAgent.destination = patrolPoints[index];
     }
 
     // Update is called once per frame
@@ -32,17 +35,14 @@ public class Patrol : MonoBehaviour
 
         if(shouldPatrol && patrolPoints.Count > 0)
         {
-            Vector3 direction = patrolPoints[index] - gameObject.transform.position;
-            gameObject.transform.position += (direction.normalized) * Time.deltaTime * speed;
-            gameObject.transform.LookAt(patrolPoints[index]);
-
-            if(direction.magnitude <= 1.0f)
+            if(navAgent.remainingDistance <= 1.0f)
             {
                 index++;
-                if(index >= patrolPoints.Count)
+                if (index >= patrolPoints.Count)
                 {
                     index = 0;
                 }
+                navAgent.destination = patrolPoints[index];
             }
         }
     }
