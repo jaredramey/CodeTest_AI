@@ -6,7 +6,7 @@ public class Patrol : MonoBehaviour
 {
     [HideInInspector]
     private List<Vector3> patrolPoints = new List<Vector3>();
-    public bool shouldWander;
+    public bool shouldPatrol;
     public float speed;
     public bool showPath;
     private int index;
@@ -19,26 +19,24 @@ public class Patrol : MonoBehaviour
             if (t.name == "pathNode")
             {
                 patrolPoints.Add(t.position);
-                Debug.Log(t.position);
             }
         }
 
         if (!Application.isPlaying) return;
-        showPath = true;
-        shouldWander = true;
         index = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(shouldWander && patrolPoints.Count > 0)
+
+        if(shouldPatrol && patrolPoints.Count > 0)
         {
-            Vector3 direction = patrolPoints[index] + gameObject.transform.position;
+            Vector3 direction = patrolPoints[index] - gameObject.transform.position;
             gameObject.transform.position += (direction.normalized) * Time.deltaTime * speed;
             gameObject.transform.LookAt(patrolPoints[index]);
 
-            if(gameObject.transform.position.x == patrolPoints[index].x && gameObject.transform.position.z == patrolPoints[index].z)
+            if(direction.magnitude <= 1.0f)
             {
                 index++;
                 if(index >= patrolPoints.Count)
@@ -47,6 +45,11 @@ public class Patrol : MonoBehaviour
                 }
             }
         }
+    }
+
+    public Vector3 GetNextPatrolPoint()
+    {
+        return patrolPoints[index];
     }
 
     private void OnDrawGizmos()
