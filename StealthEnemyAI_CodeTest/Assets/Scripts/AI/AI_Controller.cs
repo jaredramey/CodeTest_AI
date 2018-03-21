@@ -7,12 +7,15 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Chase))]
 [RequireComponent(typeof(Patrol))]
 [RequireComponent(typeof(NavMeshAgent))]
-[RequireComponent(typeof(Shoot))]
 public class AI_Controller : MonoBehaviour
 {
+    public GameObject bulletPrefab;
+    public Transform bulletSpawn;
+
     private Chase chase;
     private Patrol patrol;
     private Shoot shoot;
+    private float timer = 0.5f;
     private NavMeshAgent navAgent;
     bool Test_ForceCanSeePlayer;
 
@@ -21,8 +24,8 @@ public class AI_Controller : MonoBehaviour
     {
         chase = gameObject.GetComponent<Chase>();
         patrol = gameObject.GetComponent<Patrol>();
-        shoot = gameObject.GetComponent<Shoot>();
         navAgent = gameObject.GetComponent<NavMeshAgent>();
+        bulletSpawn = gameObject.transform.Find("BulletSpawn");
 
         chase.shouldChase = false;
         patrol.shouldPatrol = false;
@@ -32,41 +35,40 @@ public class AI_Controller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.P))
-        {
-            if(Test_ForceCanSeePlayer == false)
-            { Test_ForceCanSeePlayer = true; }
-        }
-        else if(Input.GetKeyDown(KeyCode.O))
-        {
-            if (Test_ForceCanSeePlayer == true)
-            { Test_ForceCanSeePlayer = false; }
-        }
-
-        if(/*chase.shouldChase == true || */Test_ForceCanSeePlayer == true)
+        if(chase.shouldChase == true)
         {
             patrol.shouldPatrol = false;
-            Test_MoveToPlayer();
-            shoot.ShootAtTarget(GameObject.Find("Player"));
+            Shoot();
         }
-        else if (/*chase.shouldChase == false || */Test_ForceCanSeePlayer == false)
+        else if (chase.shouldChase == false)
         {
-            //NavigateToNextPatrolPoint();
             patrol.shouldPatrol = true;
         }
     }
 
-    private void NavigateToNextPatrolPoint()
+    private void Shoot()
     {
-        Debug.Log("Moving To patrol point");
-        Vector3 targetDestination = patrol.GetNextPatrolPoint();
-        navAgent.destination = targetDestination;
+        timer -= Time.deltaTime;
+
+        gameObject.transform.LookAt(GameObject.Find("Player").transform);
+
+        if (timer <= 0)
+        {
+            GameObject bullet = (GameObject)Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
+
+            bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * 10;
+
+            Destroy(bullet, 8.0f);
+
+            timer = 0.5f;
+        }
     }
 
-    private void Test_MoveToPlayer()
+    private void OnGUI()
     {
-        Debug.Log("Moving To player");
-        Vector3 targetDestination = GameObject.Find("Player").transform.position;
-        navAgent.destination = targetDestination;
+        if(chase.shouldChase == true)
+        {
+            GUI.Label(new Rect(Screen.width / 2, Screen.height / 2, Screen.width, Screen.height), "Shooting at the player!");
+        }
     }
 }

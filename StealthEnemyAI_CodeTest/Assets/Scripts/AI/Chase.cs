@@ -8,11 +8,11 @@ using UnityEngine.AI;
 public class Chase : MonoBehaviour
 {
     public bool shouldChase;
-    public float speed;
     private SphereCollider perception;
     private bool playerIsNear;
     private GameObject player;
     private NavMeshAgent navAgent;
+    private Vector3 lastKnownPosition;
 
     // Use this for initialization
     void Start()
@@ -29,11 +29,11 @@ public class Chase : MonoBehaviour
     {
         RaycastHit canSeePlayer;
 
-        if(playerIsNear)
+        if(playerIsNear == true)
         {
             Physics.Linecast(gameObject.transform.position, player.transform.position, out canSeePlayer);
 
-            if(canSeePlayer.collider.gameObject == player)
+            if(canSeePlayer.collider.gameObject.name == player.name)
             {
                 shouldChase = true;
                 ChasePlayer();
@@ -43,11 +43,21 @@ public class Chase : MonoBehaviour
                 shouldChase = false;
             }
         }
+        else
+        {
+            if (shouldChase == true)
+            {
+                shouldChase = false;
+            }
+        }
     }
 
     private void ChasePlayer()
     {
-        navAgent.destination = player.transform.position;
+        if (navAgent.destination != player.transform.position && navAgent.remainingDistance >= 10)
+        {
+            navAgent.destination = player.transform.position;
+        }
     }
 
     private void OnTriggerEnter(Collider other)

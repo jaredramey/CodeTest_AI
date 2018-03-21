@@ -32,10 +32,9 @@ public class Patrol : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         if(shouldPatrol && patrolPoints.Count > 0)
         {
-            if(navAgent.remainingDistance <= 1.0f)
+            if (navAgent.remainingDistance <= 1.0f)
             {
                 index++;
                 if (index >= patrolPoints.Count)
@@ -64,14 +63,5 @@ public class Patrol : MonoBehaviour
                 }
             }
         }
-    }
-
-    public GameObject AddNode()
-    {
-        GameObject newNode = new GameObject();
-        newNode.transform.SetParent(gameObject.transform);
-        newNode.transform.position = gameObject.transform.position;
-        newNode.name = "pathNode";
-        return newNode;
     }
 }
